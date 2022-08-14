@@ -22,12 +22,10 @@ public class Customer {
     private String name;
     private String surname;
     private String phoneNumber;
-    private int creditScore;
     private double salary;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
-    private List<CreditApplication> creditApplicationList;
-
+    private List<CreditApplication> creditApplicationsList;
 
 }

@@ -18,19 +18,19 @@ public class CustomerController {
     private CustomerService customerService;
 
     //returns all customers
-    @GetMapping("/all")
+    @GetMapping("")
     public List<Customer> getAllCustomers(){
         return customerService.getAllCustomers();
     }
 
     //creates a new customer
-    @PostMapping("/create")
+    @PostMapping("")
     public Customer create(@RequestBody CustomerDTO customerDTO){
         return customerService.create(customerDTO);
     }
 
     //updates a customer
-    @PutMapping("/{identityNumber}")
+    @PutMapping("/{id}")
     public ResponseEntity updateCustomer(@PathVariable String identityNumber, @RequestBody CustomerDTO customer){
         Customer update = customerService.update(identityNumber, customer);
         if (update == null) {
@@ -54,3 +54,16 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK).body("Related customer was deleted successfully");
     }
 }
+
+
+/*
+
+POST /customers 1 tane customer yarat
+PUT /customers/id idli li customeri guncelle
+GET /customers/id idli customer getir
+GET /customers butun customer getir
+DELETE /customers/id idli customer sil
+
+GET /customers?identityNumber=123231
+
+* */
