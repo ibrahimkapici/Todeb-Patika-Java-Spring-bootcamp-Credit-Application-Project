@@ -4,10 +4,12 @@ import com.example.credit.demo.model.entity.CreditApplication;
 import com.example.credit.demo.model.entity.CreditScore;
 import com.example.credit.demo.model.entity.Customer;
 import com.example.credit.demo.model.enums.CreditStatus;
+import org.springframework.stereotype.Service;
 
 import static com.example.credit.demo.cons.Constants.CREDIT_MULTIPLIER;
-
+@Service
 public class DecisionService {
+    //decide returns the credit application result.
     public CreditApplication decide(Customer customer, CreditScore creditScore){
 
         if (creditScore.getCreditScore() < 500){

@@ -19,7 +19,7 @@ public class CustomerDTO {
     private int creditScore;
     private double salary;
 
-    private List<CreditApplication> creditApplicationList;
+    private List<CreditApplication> creditApplicationsList;
 
     public static final class  CustomerDTOBuilder{
         private Long id;
@@ -75,6 +75,7 @@ public class CustomerDTO {
         public CustomerDTO build(){
             CustomerDTO customerDTO = new CustomerDTO();
             customerDTO.setId(id);
+            customerDTO.id = id;
             customerDTO.setIdentityNumber(identityNumber);
             customerDTO.setName(name);
             customerDTO.setSurname(surname);

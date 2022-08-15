@@ -1,75 +1,91 @@
 package com.example.credit.demo.service;
 
-import com.example.credit.demo.exception.EntityNotFoundException;
 import com.example.credit.demo.model.dto.CustomerDTO;
 import com.example.credit.demo.model.entity.CreditApplication;
+import com.example.credit.demo.model.entity.CreditScore;
 import com.example.credit.demo.model.entity.Customer;
 import com.example.credit.demo.model.mapper.CustomerMapper;
 import com.example.credit.demo.repository.CustomerRepository;
-import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.IdentityHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final CreditScoreService creditScoreService;
+    private final DecisionService decisionService;
 
-    public List<Customer> getAll() {
-        return customerRepository.findAll();
-    }
-
-    public Customer getById(Long id){
+    public ResponseEntity<Customer> getById(Long id){
         Optional<Customer> byId = customerRepository.findById(id);
-        return byId.orElseThrow(()-> new RuntimeException("Customer not found"));
+        if (!byId.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return  ResponseEntity.status(HttpStatus.OK).body(byId.get());
     }
 
     public Customer getByIdentityNumber(String identityNumber){
         Optional<Customer> getByIdentityNumber = customerRepository.findByIdentityNumber(identityNumber);
         return getByIdentityNumber.orElseThrow(()-> new RuntimeException("Customer not found"));
     }
-    public Customer create(CustomerDTO customerDTO){
+    public Customer save(CustomerDTO customerDTO){
         Customer customer = CustomerMapper.toEntity(customerDTO);
         return customerRepository.save(customer);
     }
 
     public List<Customer> getAllCustomers() {
-        List<Customer> allCustomers = customerRepository.findAll();
-        return  allCustomers;
+        return customerRepository.findAll();
     }
 
     public void delete(Long id) {
-        getById(id);
-        customerRepository.deleteById(id);
+        Customer customer = customerRepository.findById(id).get();
+        customerRepository.delete(customer);
     }
 
-    public Customer update(String identityNumber, CustomerDTO customer) {
-        Optional<Customer> getById = customerRepository.findByIdentityNumber(identityNumber);
-        if (!getById.isPresent())
-            throw new EntityNotFoundException("Customer", "identityNumber: " + identityNumber);
-            Customer updatedCustomer = getById.get();
-            if(!StringUtils.isEmpty(customer.getName())){
-                updatedCustomer.setName(customer.getName());
-            }
-             if(!StringUtils.isEmpty(customer.getSurname())){
-                 updatedCustomer.setSurname(customer.getSurname());
-             }
-             if(!StringUtils.isEmpty(customer.getSalary())) {
-                 updatedCustomer.setSalary(customer.getSalary());
-             }
-             if(!StringUtils.isEmpty(customer.getPhoneNumber())) {
-                 updatedCustomer.setPhoneNumber(customer.getPhoneNumber());
-             }
-             return customerRepository.save(updatedCustomer);
+    public void update(Customer customer) {
+        customerRepository.save(customer);
+//        Optional<Customer> getById = customerRepository.findById(id);
+//        if (getById.isPresent()) {
+//            Customer customer = getById.get();
+//            if (!ObjectUtils.isEmpty(updatedCustomer.getName())) {
+//                customer.setName(updatedCustomer.getName());
+//            }
+//            if (!ObjectUtils.isEmpty(updatedCustomer.getSurname())) {
+//                customer.setSurname(updatedCustomer.getSurname());
+//            }
+//            if (!ObjectUtils.isEmpty(updatedCustomer.getSalary())) {
+//                customer.setSalary(updatedCustomer.getSalary());
+//            }
+//            if (!ObjectUtils.isEmpty(updatedCustomer.getPhoneNumber())) {
+//                customer.setPhoneNumber(updatedCustomer.getPhoneNumber());
+//            }
+//            customerRepository.save(customer);
+//        }
     }
+    public ResponseEntity apply(Long id){
 
+        Optional<Customer> optionalCustomer = customerRepository.findById(id);
+
+        if (!optionalCustomer.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found");
+        }
+        Customer customer = optionalCustomer.get();
+        CreditScore result = creditScoreService.getByIdentityNumber(customer.getIdentityNumber());
+        CreditApplication creditApplication = decisionService.decide(customer, result);
+
+        customer.addCreditApplication(creditApplication);
+
+        save(CustomerMapper.toDTO(customer));
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
 }
 
 

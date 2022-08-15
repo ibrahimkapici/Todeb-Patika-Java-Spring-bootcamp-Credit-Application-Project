@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OntimeTokenRepository extends JpaRepository<OnetimeToken, Long> {
+public interface OnetimeTokenRepository extends JpaRepository<OnetimeToken, Long> {
 }

@@ -2,6 +2,7 @@ package com.example.credit.demo.model.entity;
 
 
 import com.example.credit.demo.model.enums.CreditStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,11 @@ public class CreditApplication {
     @Column(name = "credit_status")
     private CreditStatus creditStatus;
 
+    //ilk çalışan hali için customeri sil.
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "customer_identity_number", referencedColumnName = "customer_id")
+//    private Customer customer;
+
     public CreditApplication(double creditAmount, int creditScore, CreditStatus creditStatus) {
         this.creditAmount = creditAmount;
         this.creditScore = creditScore;
@@ -44,4 +50,8 @@ public class CreditApplication {
         this.creditScore = creditScore;
         this.creditStatus = creditStatus;
     }
+
+//    public CreditApplication(Customer customer) {
+//        this.customer = customer;
+//    }
 }

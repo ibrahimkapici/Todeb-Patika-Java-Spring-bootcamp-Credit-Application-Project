@@ -11,59 +11,44 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/customers")
 public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
 
     //returns all customers
-    @GetMapping("")
+    @GetMapping
     public List<Customer> getAllCustomers(){
         return customerService.getAllCustomers();
     }
 
     //creates a new customer
-    @PostMapping("")
+    @PostMapping
     public Customer create(@RequestBody CustomerDTO customerDTO){
-        return customerService.create(customerDTO);
+        return customerService.save(customerDTO);
     }
 
-    //updates a customer
-    @PutMapping("/{id}")
-    public ResponseEntity updateCustomer(@PathVariable String identityNumber, @RequestBody CustomerDTO customer){
-        Customer update = customerService.update(identityNumber, customer);
-        if (update == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Customer could not be updated successfully");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(update);
+    @PutMapping
+    public void updateCustomer(@RequestBody CustomerDTO customer){
+        customerService.save(customer);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<Customer> getCustomer(@PathVariable(name = "id") Long id){
+        return customerService.getById(id);
+    }
+    @DeleteMapping("{id}")
+    public void deleteCustomer(@PathVariable(name = "id") Long id){
+        customerService.delete(id);
+    }
 
-    //deletes a customer
-    @DeleteMapping
-    public ResponseEntity deleteCustomer(@RequestParam(name = "id") Long id){
-        try {
-            customerService.delete(id);
-        }
-            catch (RuntimeException exception){
-            return ResponseEntity.notFound().build();
-
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("Related customer was deleted successfully");
+    @GetMapping("/search")
+    public Customer getByIdentityNumber(@RequestParam("identityNumber")String identityNumber){
+        return customerService.getByIdentityNumber(identityNumber);
+    }
+    @PostMapping("/{id}/apply")
+    public void apply(@PathVariable Long id){
+        customerService.apply(id);
     }
 }
-
-
-/*
-
-POST /customers 1 tane customer yarat
-PUT /customers/id idli li customeri guncelle
-GET /customers/id idli customer getir
-GET /customers butun customer getir
-DELETE /customers/id idli customer sil
-
-GET /customers?identityNumber=123231
-
-* */

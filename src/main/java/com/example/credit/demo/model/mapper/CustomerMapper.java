@@ -11,8 +11,9 @@ public class CustomerMapper {
         customerDTO.setIdentityNumber(customer.getIdentityNumber());
         customerDTO.setId(customer.getId());
         customerDTO.setSalary(customer.getSalary());
-        customer.setCreditScore(customer.getCreditScore());
-        customer.setPhoneNumber(customer.getPhoneNumber());
+        customerDTO.setPhoneNumber(customer.getPhoneNumber());
+        customerDTO.setCreditApplicationsList(customer.getCreditApplicationsList());
+
         return customerDTO;
     }
 
@@ -24,8 +25,7 @@ public class CustomerMapper {
         customer.setSurname(customerDTO.getSurname());
         customer.setIdentityNumber(customerDTO.getIdentityNumber());
         customer.setPhoneNumber(customerDTO.getPhoneNumber());
-        customer.setCreditScore(customerDTO.getCreditScore());
-        customer.setCreditApplicationList(customerDTO.getCreditApplicationList());
+        customer.setCreditApplicationsList(customerDTO.getCreditApplicationsList());
         return customer;
     }
 }

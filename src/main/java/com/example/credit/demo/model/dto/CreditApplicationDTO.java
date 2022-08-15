@@ -15,13 +15,11 @@ public class CreditApplicationDTO {
 
     private Long applicationId;
 
-    private final Integer creditLimitMultiplier = 4;
-
     private double creditAmount;
 
     private int creditScore;
 
     private CreditStatus creditStatus;
-
     private Customer customer;
+
 }

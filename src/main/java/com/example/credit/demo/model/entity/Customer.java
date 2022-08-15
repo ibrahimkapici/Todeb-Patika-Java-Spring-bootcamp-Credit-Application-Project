@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,8 +25,25 @@ public class Customer {
     private String phoneNumber;
     private double salary;
 
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<CreditApplication> creditApplicationsList;
+
+// ilk çalıştığı hali
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
-    private List<CreditApplication> creditApplicationsList;
+    private List<CreditApplication> creditApplicationsList = new ArrayList<>();
 
+
+    public void addCreditApplication(CreditApplication creditApplication) {
+        creditApplicationsList.add(creditApplication);
+    }
+
+    public Customer(Long id, String identityNumber, String name, String surname, String phoneNumber, double salary) {
+        this.id = id;
+        this.identityNumber = identityNumber;
+        this.name = name;
+        this.surname = surname;
+        this.phoneNumber = phoneNumber;
+        this.salary = salary;
+    }
 }
